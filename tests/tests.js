@@ -45,5 +45,22 @@ exports.defineAutoTests = function () {
 			};
 			p.ping([{query: 'undefineddomain.com', timeout: 1, retry: 3, version: 'v6'}], success, err);
 		});
+
+		it('should accept a custom packetSize and echo it back in the request', function (done) {
+			var p, success, err;
+			p = new window.Ping();
+			success = function (r) {
+				expect(r).toBeDefined();
+				expect(r.length > 0).toBe(true);
+				expect(r[0].request.packetSize.toString()).toBe('64');
+				expect(r[0].response.result.target).toBe('github.com');
+				expect(r[0].response.status).toBe('success');
+				done();
+			};
+			err = function (e) {
+				console.log(e);
+			};
+			p.ping([{query: 'github.com', timeout: 1, retry: 3, version: 'v4', packetSize: 64}], success, err);
+		});
 	});
 };
