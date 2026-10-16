@@ -30,12 +30,13 @@ Although the object is in the global scope, it is not available until after the 
 > - timeout : Time to wait for a response, in seconds.
 > - retry :  Number of echo requests to send.
 > - version : Ping IPv4 or IPv6 address (Ping or Ping6).
+> - packetSize : Number of data bytes to send (ICMP payload size). Optional; defaults to the standard 56 bytes when omitted or set to 0.
 
 ```js
 document.addEventListener('deviceready', onDeviceReady, false);
 function onDeviceReady() {
   var p, success, err, ipList;
-  ipList = [{query: 'www.tiste.org', timeout: 1,retry: 3,version:'v4'},
+  ipList = [{query: 'www.tiste.org', timeout: 1,retry: 3,version:'v4',packetSize: 64},
             {query: 'www.somesite.com', timeout: 2,'retry': 3,version:'v6'}];
   success = function (results) {
     console.log(results);
@@ -54,7 +55,7 @@ function onDeviceReady() {
 
 This method takes the following arguments:
 
-* ipList: an array of json objects with parameters : domain to query, retry, timeout and version.
+* ipList: an array of json objects with parameters : domain to query, retry, timeout, version and packetSize (optional).
 * success: a callback function that handles success
 * err: a callback function that handles error
 
@@ -78,7 +79,8 @@ The callback function for success takes one argument, which is a JSON array of r
         "query": "www.tiste.org",
         "timeout": "1",
         "retry": "3",
-        "version": "v4"
+        "version": "v4",
+        "packetSize": "64"
     }
  }, {
     "response": {

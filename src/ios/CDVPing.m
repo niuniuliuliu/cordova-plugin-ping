@@ -17,6 +17,7 @@ SimplePing * pinger;
 NSTimer *    sendTimer;
 NSString *host = nil;
 double timeoutVal;
+int packetSize = 0;
 //int currSeq= 0;
 NSTimer *pingTimer= nil;
 NSMutableDictionary *sequencer;
@@ -118,8 +119,12 @@ static NSString * shortErrorFromError(NSError * error) {
 }
 
 - (void)sendPing {
-    
-    [pinger sendPingWithData:nil];
+
+    if (packetSize > 0) {
+        [pinger sendPingWithData:[NSMutableData dataWithLength:packetSize]];
+    } else {
+        [pinger sendPingWithData:nil];
+    }
 }
 
 
@@ -155,7 +160,8 @@ static NSString * shortErrorFromError(NSError * error) {
                                         @"query": cmd.arguments[i][@"query"],
                                          @"timeout": cmd.arguments[i][@"timeout"],
                                          @"retry": cmd.arguments[i][@"retry"],
-                                         @"version": cmd.arguments[i][@"version"]
+                                         @"version": cmd.arguments[i][@"version"],
+                                         @"packetSize": (cmd.arguments[i][@"packetSize"] ?: @"")
     
                                          };
     
@@ -251,11 +257,12 @@ static NSString * shortErrorFromError(NSError * error) {
                                  @"query": cmd.arguments[i][@"query"],
                                  @"timeout": cmd.arguments[i][@"timeout"],
                                  @"retry": cmd.arguments[i][@"retry"],
-                                 @"version": cmd.arguments[i][@"version"]
-                                 
+                                 @"version": cmd.arguments[i][@"version"],
+                                 @"packetSize": (cmd.arguments[i][@"packetSize"] ?: @"")
+
                                  };
-    
-    
+
+
     NSDictionary *response =    @{
                                   @"status": @"error"
                                   
@@ -433,6 +440,7 @@ static NSString * shortErrorFromError(NSError * error) {
     timeoutVal = [command.arguments[i][@"timeout"] doubleValue];
     //  ping.pingPeriod = 0;
     totalPings = [command.arguments[i][@"retry"] intValue];
+    packetSize = [command.arguments[i][@"packetSize"] intValue];
     arrayout =[[NSMutableArray alloc]init];
    // currSeq = 0;
     sequencer =[[NSMutableDictionary alloc] init];
@@ -518,8 +526,9 @@ static NSString * shortErrorFromError(NSError * error) {
                                      @"query": cmd.arguments[i][@"query"],
                                      @"timeout": cmd.arguments[i][@"timeout"],
                                      @"retry": cmd.arguments[i][@"retry"],
-                                     @"version": cmd.arguments[i][@"version"]
-                                     
+                                     @"version": cmd.arguments[i][@"version"],
+                                     @"packetSize": (cmd.arguments[i][@"packetSize"] ?: @"")
+
                                      };
         
         

@@ -58,19 +58,22 @@ public class Ping extends CordovaPlugin {
 										String timeout = "";
 										String count = "";
 										String version = "";
+										String packetSize = "";
 										JSONObject request = new JSONObject();
 										JSONObject responseJson = new JSONObject();
 										try{
-												JSONObject obj = args.optJSONObject(index);  
+												JSONObject obj = args.optJSONObject(index);
 												query = obj.optString("query");
 												timeout = obj.optString("timeout");
 												count = obj.optString("retry");
 												version = obj.optString("version");
+												packetSize = obj.optString("packetSize");
 												request.put("query",query);
 												request.put("timeout",timeout);
 												request.put("retry",count);
 												request.put("version",version);
-												JSONObject result = doPing(query,timeout,count,version);
+												request.put("packetSize",packetSize);
+												JSONObject result = doPing(query,timeout,count,version,packetSize);
 												Map<String,String> out = new HashMap<String, String>();
 												out= parse(result,out);
 												JSONObject r = new JSONObject();
@@ -136,7 +139,7 @@ public class Ping extends CordovaPlugin {
 				return out;
 		}
 
-		private JSONObject doPing(String ip, String timeout, String retry, String version){
+		private JSONObject doPing(String ip, String timeout, String retry, String version, String packetSize){
 				System.out.println("doPing \n");
 				System.out.println(ip + "\n");
 				String inputLine = "";
@@ -159,6 +162,9 @@ public class Ping extends CordovaPlugin {
 						}
 						if(Integer.parseInt(retry) > 0){
 								command=    command+ " -c "+retry+ " ";
+						}
+						if(packetSize != null && packetSize.length() > 0 && Integer.parseInt(packetSize) > 0){
+								command=    command+ " -s "+packetSize+ " ";
 						}
 						System.out.println(">>"+command+ip);
 						Process mIpAddrProcess = runtime.exec(command + ip);
